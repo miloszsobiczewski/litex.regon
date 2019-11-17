@@ -262,15 +262,14 @@ class REGONAPI(object):
             regon=regon,
             report_name=report_name
         )
-        result = objectify.fromstring(
-            get_message_element(
+        obj = get_message_element(
                 mesg,
                 0,
                 '//bir:DanePobierzPelnyRaportResult/text()'
-            )[0]
-        )
-
-        if not len(result):
-            raise REGONAPIError('Getting full report failed.')
-
-        return result[0].dane
+            )
+        if obj:
+            result = objectify.fromstring(obj[0])
+            return result[0].dane
+        else:
+            result = objectify.Element("detailed")
+            return result
